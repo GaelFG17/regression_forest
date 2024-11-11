@@ -1,0 +1,25 @@
+# Usa una imagen base de Python
+FROM python:3.9-slim
+
+# Establece el directorio de trabajo
+WORKDIR /app
+
+# Copia los archivos de la aplicación al contenedor
+COPY . /app
+
+# Instala las dependencias del sistema
+RUN apt-get update && \
+    apt-get install -y libgl1-mesa-glx && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Instala las dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Configura una variable de entorno para indicar que Flask se ejecutará en producción
+ENV FLASK_ENV=production
+
+# Expone el puerto 5000 (Flask por defecto)
+EXPOSE 5000
+
+# Comando para ejecutar la aplicación
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
